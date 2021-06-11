@@ -20,7 +20,8 @@ const customArgs = [
   `--disable-extensions-except=${pathToExtension}`,
   `--load-extension=${pathToExtension}`,
   '--disable-features=IsolateOrigins,site-per-process',
-  '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end'
+  '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end', 
+  '--disable-web-security'
 ]
 
 const chromeOptions = {
@@ -38,20 +39,26 @@ puppeteer.launch(chromeOptions).then(async browser => {
     const page = await browser.newPage()
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
-    // * must simulate user clicks on captcha feilds in frames, if captcha is visible. cant target those elemts atm.
-    for (let frame of await page.mainFrame().childFrames()) {
-      frame = page.frames().find(f => f.url().includes('https://www.google.com/recaptcha/api2/'))
-      await frame.waitForTimeout(4000)
-      await frame.click('#rc-anchor-container')
-    }
 
-  
+
+
+
+    // * must simulate user clicks on captcha feilds in frames, if captcha is visible. cant target those elemts atm.
+    // ! need to target the dom of hte recaptcha iframe in orer to siultae clicks that the busted extension needs
+    // for (const frame of page.mainFrame().childFrames()) {
+    //   await frame.waitForSelector('#rc-anchor-container', { timeout: timeoutDuration } )
+    //   await frame.click('#rc-anchor-container')
+    // }
+
+
+
 
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
 
     // delay to give time for necessary DOM content to load
     await page.waitForTimeout(1000)
+    await page.screenshot({ path: '1.png' })
 
     // handle login form
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
@@ -59,24 +66,26 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#use-theory-test-number')
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login')
+    await page.screenshot({ path: '2.png' })
 
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
     await page.click('#test-centre-change')
+    await page.screenshot({ path: '3.png' })
 
     // next page actions
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
+    await page.screenshot({ path: '4.png' })
 
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
     await page.click('#test-centres-submit')
-
-    await page.screenshot({ path: 'availability page.png' })
+    await page.screenshot({ path: '5.png' })
   
     // * for when data has been found and mapped for a result / communicated/notified to user / process complete
     //await browser.close()
