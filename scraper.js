@@ -31,14 +31,20 @@ const chromeOptions = {
   args: customArgs
 }
 
-// ! TO DO
 // * must simulate user clicks on captcha feilds, if captcha is visible.
-
+// rc-anchor-container
 
 // puppeteer usage as normal
 puppeteer.launch(chromeOptions).then(async browser => {
   try {
+
     const page = await browser.newPage()
+
+    const frame = await page.frames()
+    console.log(frame)
+    if (frame) {
+      console.log('frame found')
+    }
 
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
@@ -91,7 +97,10 @@ puppeteer.launch(chromeOptions).then(async browser => {
   }
 })
 
+
+
 // ? TO DO:
+// * must simulate user clicks on captcha feilds, if captcha is visible.
 // 1 scrape desination page and map through test centers to see if dates are found/not found
 // 1.1 use dev tools to simlate a test slot being avilable
 
