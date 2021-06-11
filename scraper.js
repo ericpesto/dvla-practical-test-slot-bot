@@ -51,6 +51,10 @@ puppeteer.launch(chromeOptions).then(async browser => {
     //   await frame.click('#rc-anchor-container')
     // }
 
+    //console.log(await page.frames())
+    // const frame = await page.frames().find(f => f.name() === 'iframeResult');
+    // const button = await frame.$('button');
+    // button.click();
 
 
 
