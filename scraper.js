@@ -39,11 +39,14 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
     // * must simulate user clicks on captcha feilds in frames, if captcha is visible. cant target those elemts atm.
-    for (const frame of page.mainFrame().childFrames()) {
+    for (let frame of await page.mainFrame().childFrames()) {
+      frame = page.frames().find(f => f.url().includes('https://www.google.com/recaptcha/api2/'))
       await frame.waitForTimeout(4000)
       await frame.click('#rc-anchor-container')
     }
+
   
+
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
 
@@ -57,21 +60,17 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login')
 
-    // ! puppeteer clicks are not being trated like user clicks, therfoer triggers captcha
-    // 1) try to avoid captcha from being triggered
-    // 2) try to solve capthas as they come up
+    // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
     await page.click('#test-centre-change')
 
-    // ! recaptcha point?
-
+    // next page actions
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
 
-    // ! recaptcha point?
-
+    // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
