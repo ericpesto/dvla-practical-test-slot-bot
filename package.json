@@ -1,0 +1,17 @@
+{
+  "name": "driving-test-tracker",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^10.0.0",
+    "promise-poller": "^1.9.1",
+    "puppeteer": "^10.0.0",
+    "puppeteer-extra": "^3.1.18",
+    "puppeteer-extra-plugin-recaptcha": "^3.4.0",
+    "puppeteer-extra-plugin-stealth": "^2.7.8",
+    "request-promise-native": "^1.0.9",
+    "user-agents": "^1.0.678"
+  }
+}

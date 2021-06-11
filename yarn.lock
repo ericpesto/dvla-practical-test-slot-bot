@@ -659,9 +659,9 @@ universalify@^2.0.0:
   integrity sha512-hAZsKq7Yy11Zu1DE0OzWjw7nnLZmJZYTDZZyEFHZdUhV8FkH5MCfoU1XMaxXovpyW5nq5scPqq0ZDP9Zyl04oQ==
 
 user-agents@^1.0.678:
-  version "1.0.678"
-  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.678.tgz#4ca4430620f245c7a8f0add1c8ca9eb57f5fb6fc"
-  integrity sha512-GKEW18JmySWiviwuvfJkHy54nqsxib98hwgQHthN85hefVgwb+ZWzXf6Pd0/jVMpUWV2+xH4amlRr/GhT9+KUA==
+  version "1.0.680"
+  resolved "https://registry.yarnpkg.com/user-agents/-/user-agents-1.0.680.tgz#d3e012fecca06cfe01e6cf1482ad49bec34514c9"
+  integrity sha512-h8hdTx2Ri/M+1NncEq/MAEyPXeRh34jpYWUopCZfDCX3SRMJcgaMG2ZlQmkeQfVC3E7MmscmTRRkUdazN74tjQ==
   dependencies:
     dot-json "^1.2.2"
     lodash.clonedeep "^4.5.0"
