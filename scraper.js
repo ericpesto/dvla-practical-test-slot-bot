@@ -31,23 +31,19 @@ const chromeOptions = {
   args: customArgs
 }
 
-// * must simulate user clicks on captcha feilds, if captcha is visible.
-// rc-anchor-container
-
-// puppeteer usage as normal
+// launch puppetteer
 puppeteer.launch(chromeOptions).then(async browser => {
   try {
 
     const page = await browser.newPage()
-
-    const frame = await page.frames()
-    console.log(frame)
-    if (frame) {
-      console.log('frame found')
-    }
-
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
+    // * must simulate user clicks on captcha feilds in frames, if captcha is visible. cant target those elemts atm.
+    for (const frame of page.mainFrame().childFrames()) {
+      await frame.waitForTimeout(4000)
+      await frame.click('#rc-anchor-container')
+    }
+  
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
 
@@ -61,7 +57,6 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login')
 
-
     // ! puppeteer clicks are not being trated like user clicks, therfoer triggers captcha
     // 1) try to avoid captcha from being triggered
     // 2) try to solve capthas as they come up
@@ -70,18 +65,12 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#test-centre-change')
 
     // ! recaptcha point?
-    // for (const frame of page.mainFrame().childFrames()) {
-    //   await frame.solveRecaptchas()
-    // }
 
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
 
     // ! recaptcha point?
-    // for (const frame of page.mainFrame().childFrames()) {
-    //   await frame.solveRecaptchas()
-    // }
 
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
@@ -97,8 +86,6 @@ puppeteer.launch(chromeOptions).then(async browser => {
   }
 })
 
-
-
 // ? TO DO:
 // * must simulate user clicks on captcha feilds, if captcha is visible.
 // 1 scrape desination page and map through test centers to see if dates are found/not found
@@ -108,5 +95,3 @@ puppeteer.launch(chromeOptions).then(async browser => {
 // 3 communiate availability result to user, screen shot / mapped data of each test center and wether they have slots available
 
 // EXTRA FEATURE: if slot is avaviable, make the bot book the next available slot for you. At present you ould have to login-in yourself ASAP and hope the slot is still available. 
-
-
