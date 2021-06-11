@@ -3,6 +3,7 @@ Automated bot/web-scraper to check for available DVLA Practical Test Slots built
 
 
 // ? TO DO:
+// * must simulate user clicks on captcha feilds, if captcha is visible.
 // 1 scrape desination page and map through test centers to see if dates are found/not found
 // 1.1 use dev tools to simlate a test slot being avilable
 
