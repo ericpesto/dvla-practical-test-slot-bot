@@ -57,12 +57,11 @@ puppeteer.launch(chromeOptions).then(async browser => {
 
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
-
-    // delay to give time for necessary DOM content to load
     await page.waitForTimeout(1000)
     await page.screenshot({ path: '1.png' })
 
     // handle login form
+    await page.waitForTimeout(1000)
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
     await page.type('#driving-licence-number', drivingLicenceNumber)
     await page.click('#use-theory-test-number')
@@ -77,6 +76,7 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.screenshot({ path: '3.png' })
 
     // next page actions
+    await page.waitForTimeout(1000)
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
