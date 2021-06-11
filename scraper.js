@@ -4,9 +4,14 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 
 dotenv.config()
 
+// You must have Buster Chrome extension downlaoded to Chrome for reCAPTCHA busting.
+const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
+
+// .env variables for hiding sensitive info
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
 const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
-const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
+
+// application global variables
 const timeoutDuration = 240000
 
 puppeteer.use(StealthPlugin())
@@ -26,6 +31,7 @@ const chromeOptions = {
   args: customArgs
 }
 
+// ! TO DO
 // * must simulate user clicks on captcha feilds, if captcha is visible.
 
 
