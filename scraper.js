@@ -1,30 +1,31 @@
 import dotenv from 'dotenv'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
+// import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 
 dotenv.config()
 
-const apiToken = process.env['API_TOKEN']
+// const apiToken = process.env['API_TOKEN']
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
 const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
 const timeoutDuration = 240000
 
 puppeteer.use(StealthPlugin())
-puppeteer.use(
-  RecaptchaPlugin({
-    provider: { id: '2captcha', token: apiToken },
-    visualFeedback: true , // colorize reCAPTCHAs (violet = detected, green = solved)
-    solveInactiveChallenges: true
-  })
-)
+
+// puppeteer.use(
+//   RecaptchaPlugin({
+//     provider: { id: '2captcha', token: apiToken },
+//     visualFeedback: true , // colorize reCAPTCHAs (violet = detected, green = solved)
+//     solveInactiveChallenges: true
+//   })
+// )
 
 const chromeOptions = {
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: false, 
-  slowMo: 10,
+  slowMo: 30,
   defaultViewport: null
-  // * ,
+  // ,
   // args: [
   //   '--disable-features=IsolateOrigins,site-per-process',
   //   '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end'
@@ -45,13 +46,13 @@ puppeteer.launch(chromeOptions).then(async browser => {
     // * problem i have now i that there are multiple iframe captchas, plugin strggles to solves them every time. 
     // ! recaptchas appear in frames, not the main page, therefore need a work around,see below
     // Loop over all potential frames on that page
-    for (const frame of page.mainFrame().childFrames()) {
-      // Attempt to solve any potential captchas in those frames
-      // await frame.waitForNavigation({ timeout: timeoutDuration })
-      // ! cant use waitForNavigation, as frame get detached
-      // ! maybe it deached before 2captcha can engage, need a way to log whenever a captcha comes up.
-      await frame.solveRecaptchas()
-    }
+    // for (const frame of page.mainFrame().childFrames()) {
+    //   // Attempt to solve any potential captchas in those frames
+    //   // await frame.waitForNavigation({ timeout: timeoutDuration })
+    //   // ! cant use waitForNavigation, as frame get detached
+    //   // ! maybe it deached before 2captcha can engage, need a way to log whenever a captcha comes up.
+    //   await frame.solveRecaptchas()
+    // }
 
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
@@ -75,12 +76,18 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#test-centre-change')
 
     // ! recaptcha point?
+    // for (const frame of page.mainFrame().childFrames()) {
+    //   await frame.solveRecaptchas()
+    // }
 
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
 
     // ! recaptcha point?
+    // for (const frame of page.mainFrame().childFrames()) {
+    //   await frame.solveRecaptchas()
+    // }
 
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
