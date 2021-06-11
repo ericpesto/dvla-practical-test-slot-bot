@@ -46,6 +46,8 @@ puppeteer.launch(chromeOptions).then(async browser => {
     // * must simulate user clicks on captcha feilds in frames, if captcha is visible. cant target those elemts atm.
     // ! need to target the dom of hte recaptcha iframe in orer to siultae clicks that the busted extension needs
     // for (const frame of page.mainFrame().childFrames()) {
+    //   console.log(await frame)
+    //   await frame.waitForNavigation({ timeout: timeoutDuration }),
     //   await frame.waitForSelector('#rc-anchor-container', { timeout: timeoutDuration } )
     //   await frame.click('#rc-anchor-container')
     // }
