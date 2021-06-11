@@ -1,27 +1,15 @@
 import dotenv from 'dotenv'
 import puppeteer from 'puppeteer-extra'
 import StealthPlugin from 'puppeteer-extra-plugin-stealth'
-// import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 
 dotenv.config()
 
-// const apiToken = process.env['API_TOKEN']
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
 const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
 const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
 const timeoutDuration = 240000
 
-
-
 puppeteer.use(StealthPlugin())
-
-// puppeteer.use(
-//   RecaptchaPlugin({
-//     provider: { id: '2captcha', token: apiToken },
-//     visualFeedback: true , // colorize reCAPTCHAs (violet = detected, green = solved)
-//     solveInactiveChallenges: true
-//   })
-// )
 
 const customArgs = [
   `--disable-extensions-except=${pathToExtension}`,
@@ -35,9 +23,11 @@ const chromeOptions = {
   headless: false, 
   slowMo: 30,
   defaultViewport: null,
-  // ignoreDefaultArgs: ['--disable-extensions','--enable-automation'],
   args: customArgs
 }
+
+// * must simulate user clicks on captcha feilds, if captcha is visible.
+
 
 // puppeteer usage as normal
 puppeteer.launch(chromeOptions).then(async browser => {
@@ -45,21 +35,6 @@ puppeteer.launch(chromeOptions).then(async browser => {
     const page = await browser.newPage()
 
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
-  
-    // ? are there also invisible recaptchas tripping this up once logged in?
-    // That's it, a single line of code to solve reCAPTCHAs 🎉
-    // await page.solveRecaptchas()
-
-    // * problem i have now i that there are multiple iframe captchas, plugin strggles to solves them every time. 
-    // ! recaptchas appear in frames, not the main page, therefore need a work around,see below
-    // Loop over all potential frames on that page
-    // for (const frame of page.mainFrame().childFrames()) {
-    //   // Attempt to solve any potential captchas in those frames
-    //   // await frame.waitForNavigation({ timeout: timeoutDuration })
-    //   // ! cant use waitForNavigation, as frame get detached
-    //   // ! maybe it deached before 2captcha can engage, need a way to log whenever a captcha comes up.
-    //   await frame.solveRecaptchas()
-    // }
 
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
@@ -74,9 +49,9 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login')
 
-    // ! this is where things start to go wrong, cant get past google captcha every time. just have ot hope it doesnt get triggered by my bot.
-    // ! puppeteer clicks are not being trated like user clicks. 
-    // 1) try to avoid captcah from being triggered
+
+    // ! puppeteer clicks are not being trated like user clicks, therfoer triggers captcha
+    // 1) try to avoid captcha from being triggered
     // 2) try to solve capthas as they come up
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
