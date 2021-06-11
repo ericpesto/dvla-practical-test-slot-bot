@@ -31,8 +31,6 @@ const chromeOptions = {
   // ]
 }
 
-// https://driverpracticaltest.dvsa.gov.uk/login
-// https://queue.driverpracticaltest.dvsa.gov.uk/
 // puppeteer usage as normal
 puppeteer.launch(chromeOptions).then(async browser => {
   try {
@@ -40,14 +38,18 @@ puppeteer.launch(chromeOptions).then(async browser => {
 
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
   
-        
+    // ? are there also invisible recaptchas tripping this up once logged in?
     // That's it, a single line of code to solve reCAPTCHAs 🎉
     // await page.solveRecaptchas()
+
+    // * problem i have now i that there are multiple iframe captchas, plugin strggles to solves them every time. 
+    // ! recaptchas appear in frames, not the main page, therefore need a work around,see below
     // Loop over all potential frames on that page
     for (const frame of page.mainFrame().childFrames()) {
       // Attempt to solve any potential captchas in those frames
       // await frame.waitForNavigation({ timeout: timeoutDuration })
-      // frame get detached before it gets solved
+      // ! cant use waitForNavigation, as frame get detached
+      // ! maybe it deached before 2captcha can engage, need a way to log whenever a captcha comes up.
       await frame.solveRecaptchas()
     }
 
@@ -58,14 +60,13 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.waitForTimeout(1000)
 
     // handle login form
-
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
     await page.type('#driving-licence-number', drivingLicenceNumber)
     await page.click('#use-theory-test-number')
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login')
 
-    // ! this is where things start to go wrong, cant get past google captcha. just have ot hope it doesnt get triggered.
+    // ! this is where things start to go wrong, cant get past google captcha every time. just have ot hope it doesnt get triggered by my bot.
     // ! puppeteer clicks are not being trated like user clicks. 
     // 1) try to avoid captcah from being triggered
     // 2) try to solve capthas as they come up
@@ -73,14 +74,13 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
     await page.click('#test-centre-change')
 
-    // ! recaptcha point
+    // ! recaptcha point?
 
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
     await page.click('#test-choice-earliest')
     await page.click('#driving-licence-submit')
 
-    
-    // ! recaptcha point
+    // ! recaptcha point?
 
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
@@ -89,12 +89,11 @@ puppeteer.launch(chromeOptions).then(async browser => {
 
     await page.screenshot({ path: 'availability page.png' })
   
-    // * for when data has been found / communicated
+    // * for when data has been found and mapped for a result / communicated/notified to user / process complete
     //await browser.close()
   } catch (err) {
     console.log(err)
   }
-  
 })
 
 // ? TO DO:
@@ -102,7 +101,8 @@ puppeteer.launch(chromeOptions).then(async browser => {
 // 1.1 use dev tools to simlate a test slot being avilable
 
 // 2 make app run on a schdule, a few times a day, exept when servers are closed.
+// 3 communiate availability result to user, screen shot / mapped data of each test center and wether they have slots available
 
-// * problem i have now i that there are multiple iframe captchas, plugin strggles to solves them every time. 
+// EXTRA FEATURE: if slot is avaviable, make the bot book the next available slot for you. At present you ould have to login-in yourself ASAP and hope the slot is still available. 
 
-// ? sitekey: 6Ld38BkUAAAAAPATwit3FXvga1PI6iVTb6zgXw62
+
