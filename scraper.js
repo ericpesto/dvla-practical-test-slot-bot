@@ -8,7 +8,10 @@ dotenv.config()
 // const apiToken = process.env['API_TOKEN']
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
 const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
+const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
 const timeoutDuration = 240000
+
+
 
 puppeteer.use(StealthPlugin())
 
@@ -20,16 +23,20 @@ puppeteer.use(StealthPlugin())
 //   })
 // )
 
+const customArgs = [
+  `--disable-extensions-except=${pathToExtension}`,
+  `--load-extension=${pathToExtension}`,
+  '--disable-features=IsolateOrigins,site-per-process',
+  '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end'
+]
+
 const chromeOptions = {
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
   headless: false, 
   slowMo: 30,
-  defaultViewport: null
-  // ,
-  // args: [
-  //   '--disable-features=IsolateOrigins,site-per-process',
-  //   '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end'
-  // ]
+  defaultViewport: null,
+  // ignoreDefaultArgs: ['--disable-extensions','--enable-automation'],
+  args: customArgs
 }
 
 // puppeteer usage as normal
