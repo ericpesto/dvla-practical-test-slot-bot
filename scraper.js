@@ -21,6 +21,7 @@ const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
 
 // application global variables
 const timeoutDuration = 240000
+const clickDelay = 30
 
 puppeteer.use(StealthPlugin())
 
@@ -59,10 +60,24 @@ puppeteer.launch(chromeOptions).then(async browser => {
     //   await frame.click('#rc-anchor-container')
     // }
 
-    //console.log(await page.frames())
-    // const frame = await page.frames().find(f => f.name() === 'iframeResult');
-    // const button = await frame.$('button');
-    // button.click();
+    // for (const frame of page.mainFrame().childFrames()){
+    //   // Here you can use few identifying methods like url(),name(),title()
+    //   if (frame.url().includes('twitter')){
+    //     console.log('we found the Twitter iframe')
+    //     twitterFrame = frame 
+    //     // we assign this frame to myFrame to use it later
+    //   }
+    // }
+    // let frame
+    // console.log(await page.frames())
+    // frame = await page.frames().find(f => f.name() === 'c-lc4afuax3drl')
+    // // const button = await frame.$('button')
+    // // button.click()
+    // console.log('frame ->', await frame)
+
+    // const frame = await page.frames().find(f => f.url().startsWith('https://www.google.com/recaptcha/api2/'))
+    // console.log(frame)
+
 
 
 
@@ -75,29 +90,38 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.waitForTimeout(1000)
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
     await page.type('#driving-licence-number', drivingLicenceNumber)
-    await page.click('#use-theory-test-number')
+    await page.click('#use-theory-test-number', { delay: clickDelay  })
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
-    await page.click('#booking-login')
+    await page.click('#booking-login', { delay: clickDelay  })
     await page.screenshot({ path: '2.png' })
+
+    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
+    // console.log('frame ->', await frame)
 
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
-    await page.click('#test-centre-change')
+    await page.click('#test-centre-change', { delay: clickDelay  })
     await page.screenshot({ path: '3.png' })
+
+    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
+    // console.log('frame ->', await frame)
 
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
-    await page.click('#test-choice-earliest')
-    await page.click('#driving-licence-submit')
+    await page.click('#test-choice-earliest', { delay: clickDelay  })
+    await page.click('#driving-licence-submit', { delay: clickDelay  })
     await page.screenshot({ path: '4.png' })
+
+    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
+    // console.log('frame ->', await frame)
 
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
-    await page.click('#test-centres-submit')
+    await page.click('#test-centres-submit', { delay: clickDelay  })
     await page.screenshot({ path: '5.png' })
   
     // * for when data has been found and mapped for a result / communicated/notified to user / process complete
