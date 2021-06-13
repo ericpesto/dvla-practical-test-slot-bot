@@ -13,6 +13,7 @@ import RecaptchaPlugin from 'puppeteer-extra-plugin-recaptcha'
 dotenv.config()
 
 // .env variables for hiding sensitive info
+const apiToken = process.env['API_TOKEN']
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
 const theoryTestPassNumber = process.env['THEORY_TEST_PASS_NUMBER']
 
@@ -23,7 +24,7 @@ const clickDelay = 30
 puppeteer.use(StealthPlugin())
 puppeteer.use(
   RecaptchaPlugin({
-    provider: { id: '2captcha', token: '607781e55fb25967eaf6c9f060878f93' },
+    provider: { id: '2captcha', token: apiToken },
     visualFeedback: true // colorize reCAPTCHAs (violet = detected, green = solved)
   })
 )
