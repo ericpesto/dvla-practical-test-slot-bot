@@ -44,22 +44,6 @@ const chromeOptions = {
 const handleRecaptcha = async(page) => {
   try {
 
-    // let recaptchaFrame // this will be populated later by our identified frame
-
-    // for (const frame of page.mainFrame().childFrames()){
-    //   //console.log('frame ->', frame)
-    //   // Here you can use few identifying methods like url(),name(),title()
-    //   // if (frame.url().startsWith('https://www.google.com/recaptcha/api2/anchor?')) {
-    //   // if (frame.url().includes('google')) {
-    //   if (frame.url().includes('recaptcha')) {
-    //     console.log('we found the recaptcha iframe')
-    //     recaptchaFrame = frame 
-    //     console.log('recaptchaFrame ->', recaptchaFrame)
-    //   } else {
-    //     console.log('recaptcha iframe not found')
-    //   }
-    // }
-
     // * recaptcha frame found, now now need to target its dom
     await page.waitForTimeout(3000)
     const frames = await page.frames()
@@ -67,10 +51,12 @@ const handleRecaptcha = async(page) => {
     // console.log('mainFrame ->', await mainFrame)
     const recaptchaFrame = await mainFrame.childFrames().find((frame) => frame.url().startsWith('https://www.google.com/recaptcha/api2/anchor'))
     if (recaptchaFrame) {
-      console.log('recaptchaFrame ->', await recaptchaFrame)
-      recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
+      // console.log('recaptchaFrame ->', await recaptchaFrame)
+      await recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
       await page.waitForTimeout(1000)
-      recaptchaFrame.click('#solver-button', { delay: clickDelay  })
+      // ! need to access shadown root elements
+      // ? do i need to go to a new frame?
+      await recaptchaFrame.click('#solver-button', { delay: clickDelay  })
       
       // const recaptchaButton = await recaptchaFrame.$eval('#rc-anchor-container', (element) => element.textContent)
       // console.log(recaptchaButton)
@@ -144,30 +130,3 @@ const checkWebsite = async() => {
 }
 
 checkWebsite()
-
-// * must simulate user clicks on captcha feilds in iframes, if captcha is visible. cant target those elemts atm.
-// ! need to target the dom of hte recaptcha iframe in orer to siultae clicks that the busted extension needs
-// for (const frame of page.mainFrame().childFrames()) {
-//   console.log(await frame)
-//   await frame.waitForNavigation({ timeout: timeoutDuration }),
-//   await frame.waitForSelector('#rc-anchor-container', { timeout: timeoutDuration } )
-//   await frame.click('#rc-anchor-container')
-// }
-
-// for (const frame of page.mainFrame().childFrames()){
-//   // Here you can use few identifying methods like url(),name(),title()
-//   if (frame.url().includes('twitter')){
-//     console.log('we found the Twitter iframe')
-//     twitterFrame = frame 
-//     // we assign this frame to myFrame to use it later
-//   }
-// }
-// let frame
-// console.log(await page.frames())
-// frame = await page.frames().find(f => f.name() === 'c-lc4afuax3drl')
-// // const button = await frame.$('button')
-// // button.click()
-// console.log('frame ->', await frame)
-
-// const frame = await page.frames().find(f => f.url().startsWith('https://www.google.com/recaptcha/api2/'))
-// console.log(frame)
