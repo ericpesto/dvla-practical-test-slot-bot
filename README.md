@@ -1,5 +1,5 @@
 # dvla-practical-test-slot-bot
-Automated bot/web-scraper to check for available DVLA Practical Test Slots built wth Node.js
+Node.js web-scraper bot whose purpose is to check for available DVLA Practical Test Slots in my area.
 
 
 TO DO:
