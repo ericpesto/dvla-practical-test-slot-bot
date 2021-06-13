@@ -1,7 +1,6 @@
 // TO DO:
-// 1. scrape desination page and map through test centers to see if dates are found/not found
-// 2. make app run on a schdule, a few times a day, exept when servers are closed.
-// 3. communiate availability result to user, screen shot / mapped data of each test center and wether they have slots available
+// 1. make app run on a schdule, a few times a day, exept when servers are closed.
+// 2. communiate availability result to user, screen shot / mapped data of each test center and wether they have slots available
 
 // EXTRA FEATURE: if slot is available, make the bot book the next available slot for you. At present you ould have to login-in yourself ASAP and hope the slot is still available. 
 
@@ -37,7 +36,7 @@ const customArgs = [
 
 const chromeOptions = {
   executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
-  headless: false, 
+  headless: true, 
   slowMo: 30,
   defaultViewport: null,
   args: customArgs
@@ -46,56 +45,75 @@ const chromeOptions = {
 const handleRecaptcha = async(page) => {
   try {
     for (const frame of await page.mainFrame().childFrames()) {
+      console.log('🚨 recaptcha found')
       await frame.solveRecaptchas()
+      console.log('🧩 recaptcha solved')
     }
   } catch (err) {
     console.log(err)
   }
 }
 
+
 const checkWebsite = async() => {
   try {
-    // launch puppetteer
+    // * launch puppetteer
+    console.log('🚀 launching puppeteer')
     const browser = await puppeteer.launch(chromeOptions)
     const page = await browser.newPage()
     await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
-    // * page nav
+    // ?  page nav (potential reCaptcha checkpoint)
     await handleRecaptcha(page)
   
-    // Wait to leave server queue
-    await page.screenshot({ path: '1.png' })
+    // * Wait to leave server queue
+    console.log('🚨 entering server queue')
+    await page.waitForNavigation({ timeout: timeoutDuration })
+    console.log('✅ left server queue')
 
-    // * page nav
+    // ?  page nav (potential reCaptcha checkpoint)
     await handleRecaptcha(page)
+    console.log('🚀 page navigated')
 
-    // handle login form
+    // * handle login form
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
     await page.type('#driving-licence-number', drivingLicenceNumber)
     await page.click('#use-theory-test-number', { delay: clickDelay  })
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
     await page.click('#booking-login', { delay: clickDelay  })
-    await page.screenshot({ path: '2.png' })
+    console.log('✅ logged in')
 
-    // * page nav
+    // ?  page nav (potential reCaptcha checkpoint)
     await handleRecaptcha(page)
+    console.log('🚀 page navigated')
 
-    // next page actions
+    // * next page actions
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
     await page.click('#test-centre-change', { delay: clickDelay  })
-    await page.screenshot({ path: '3.png' })
+    console.log('✅ form submitted')
 
-    // * page nav
+    // ? page nav (potential reCaptcha checkpoint)
     await handleRecaptcha(page)
+    console.log('🚀 page navigated')
   
-    // next page actions
+    // * next page actions
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
     await page.click('#test-centres-submit', { delay: clickDelay  })
+    console.log('✅ form submitted')
+
+    // ?  page nav (potential reCaptcha checkpoint)
+    await handleRecaptcha(page)
+    console.log('🚀 page navigated')
+
+    // * results page
+    const resultsArray = await page.$$eval('.test-centre-details > span', results => results.map(result => result.textContent))
+    console.log('👀 RESULTS FOUND ->', await resultsArray)
     await page.screenshot({ path: 'results-page.png' })
 
-    // * for when page is reached, map data for a result / communicated/notified to user / process complete
-    //await browser.close()
+    // * done
+    await browser.close()
+
   } catch (err) {
     console.log(err)
   }
