@@ -12,8 +12,8 @@ import StealthPlugin from 'puppeteer-extra-plugin-stealth'
 
 dotenv.config()
 
-// You must have Buster Chrome extension downlaoded to Chrome for reCAPTCHA busting.
-const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
+// ! You must have Buster Chrome extension downlaoded to Chrome for reCAPTCHA busting.
+// const pathToExtension = '~/Library/Application Support/Google/Chrome/Default/Extensions/mpbjkejclgfgadiemmefgebjfooflfhl/1.2.0_0'
 
 // .env variables for hiding sensitive info
 const drivingLicenceNumber = process.env['DRIVING_LICENCE_NUMBER']
@@ -26,8 +26,8 @@ const clickDelay = 30
 puppeteer.use(StealthPlugin())
 
 const customArgs = [
-  `--disable-extensions-except=${pathToExtension}`,
-  `--load-extension=${pathToExtension}`,
+  // `--disable-extensions-except=${pathToExtension}`,
+  // `--load-extension=${pathToExtension}`,
   '--disable-features=IsolateOrigins,site-per-process',
   '--flag-switches-begin --disable-site-isolation-trials --flag-switches-end', 
   '--disable-web-security'
@@ -53,9 +53,9 @@ const handleRecaptcha = async(page) => {
       // console.log('recaptchaFrame ->', await recaptchaFrame)
       await recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
       await page.waitForTimeout(3000)
-      // ! need to access shadown root elements
       // * try 2captcha again now you can find the frame
-      await recaptchaFrame.click('shadow/#solver-button', { delay: clickDelay  })
+      //await recaptchaFrame.click('#solver-button', { delay: clickDelay  })
+
     }
   } catch (err) {
     console.log(err)
