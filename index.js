@@ -41,22 +41,25 @@ const chromeOptions = {
   args: customArgs
 }
 
-const checkWebsite = async() => {
-  // launch puppetteer
-  const browser = await puppeteer.launch(chromeOptions)
-  const page = await browser.newPage()
-  await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
-
+const handleRecaptcha = async(page) => {
   try {
-    const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
-    console.log('frame', frame)
-    console.log('page.mainFrame() ->', page.mainFrame())
-    console.log('page.mainFrame() ->', frame.childFrames())
+    const frames = page.frames()
+    // .find((frame) => frame.name() === 'main-iframe')
+    console.log('frames', await frames)
+    console.log('page.mainFrame() ->', await page.mainFrame())
+    console.log('page.mainFrame() ->', await frames.childFrames())
     // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
     // console.log(recaptchaButton)
   } catch (err) {
     console.log(err)
   }
+}
+
+const checkWebsite = async() => {
+  // launch puppetteer
+  const browser = await puppeteer.launch(chromeOptions)
+  const page = await browser.newPage()
+  await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
   try {
     // Wait to leave server queue
@@ -65,16 +68,7 @@ const checkWebsite = async() => {
     await page.screenshot({ path: '1.png' })
 
     // * page nav
-    try {
-      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
-      console.log('frame', frame)
-      console.log('page.mainFrame() ->', page.mainFrame())
-      console.log('page.mainFrame() ->', frame.childFrames())
-      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
-      // console.log(recaptchaButton)
-    } catch (err) {
-      console.log(err)
-    }
+    handleRecaptcha(page)
 
     // handle login form
     await page.waitForTimeout(1000)
@@ -86,16 +80,7 @@ const checkWebsite = async() => {
     await page.screenshot({ path: '2.png' })
 
     // * page nav
-    try {
-      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
-      console.log('frame', frame)
-      console.log('page.mainFrame() ->', page.mainFrame())
-      console.log('page.mainFrame() ->', frame.childFrames())
-      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
-      // console.log(recaptchaButton)
-    } catch (err) {
-      console.log(err)
-    }
+    handleRecaptcha(page)
 
     // next page actions
     await page.waitForTimeout(1000)
@@ -104,16 +89,7 @@ const checkWebsite = async() => {
     await page.screenshot({ path: '3.png' })
 
     // * page nav
-    try {
-      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
-      console.log('frame', frame)
-      console.log('page.mainFrame() ->', page.mainFrame())
-      console.log('page.mainFrame() ->', frame.childFrames())
-      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
-      // console.log(recaptchaButton)
-    } catch (err) {
-      console.log(err)
-    }
+    handleRecaptcha(page)
 
     // next page actions
     await page.waitForTimeout(1000)
@@ -123,16 +99,7 @@ const checkWebsite = async() => {
     await page.screenshot({ path: '4.png' })
 
     // * page nav
-    try {
-      const frame = await page.frames().find((frame) => frame.name() === 'main-iframe')
-      console.log('frame', frame)
-      console.log('page.mainFrame() ->', page.mainFrame())
-      console.log('page.mainFrame() ->', frame.childFrames())
-      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
-      // console.log(recaptchaButton)
-    } catch (err) {
-      console.log(err)
-    }
+    handleRecaptcha(page)
   
     // next page actions
     await page.waitForTimeout(1000)
