@@ -41,50 +41,40 @@ const chromeOptions = {
   args: customArgs
 }
 
-// launch puppetteer
-puppeteer.launch(chromeOptions).then(async browser => {
+const checkWebsite = async() => {
+  // launch puppetteer
+  const browser = await puppeteer.launch(chromeOptions)
+  const page = await browser.newPage()
+  await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
+
   try {
+    const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
+    console.log('frame', frame)
+    console.log('page.mainFrame() ->', page.mainFrame())
+    console.log('page.mainFrame() ->', frame.childFrames())
+    // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
+    // console.log(recaptchaButton)
+  } catch (err) {
+    console.log(err)
+  }
 
-    const page = await browser.newPage()
-    await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
-
-
-
-
-    // * must simulate user clicks on captcha feilds in iframes, if captcha is visible. cant target those elemts atm.
-    // ! need to target the dom of hte recaptcha iframe in orer to siultae clicks that the busted extension needs
-    // for (const frame of page.mainFrame().childFrames()) {
-    //   console.log(await frame)
-    //   await frame.waitForNavigation({ timeout: timeoutDuration }),
-    //   await frame.waitForSelector('#rc-anchor-container', { timeout: timeoutDuration } )
-    //   await frame.click('#rc-anchor-container')
-    // }
-
-    // for (const frame of page.mainFrame().childFrames()){
-    //   // Here you can use few identifying methods like url(),name(),title()
-    //   if (frame.url().includes('twitter')){
-    //     console.log('we found the Twitter iframe')
-    //     twitterFrame = frame 
-    //     // we assign this frame to myFrame to use it later
-    //   }
-    // }
-    // let frame
-    // console.log(await page.frames())
-    // frame = await page.frames().find(f => f.name() === 'c-lc4afuax3drl')
-    // // const button = await frame.$('button')
-    // // button.click()
-    // console.log('frame ->', await frame)
-
-    // const frame = await page.frames().find(f => f.url().startsWith('https://www.google.com/recaptcha/api2/'))
-    // console.log(frame)
-
-
-
-
+  try {
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
     await page.waitForTimeout(1000)
     await page.screenshot({ path: '1.png' })
+
+    // * page nav
+    try {
+      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
+      console.log('frame', frame)
+      console.log('page.mainFrame() ->', page.mainFrame())
+      console.log('page.mainFrame() ->', frame.childFrames())
+      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
+      // console.log(recaptchaButton)
+    } catch (err) {
+      console.log(err)
+    }
 
     // handle login form
     await page.waitForTimeout(1000)
@@ -95,8 +85,17 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#booking-login', { delay: clickDelay  })
     await page.screenshot({ path: '2.png' })
 
-    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
-    // console.log('frame ->', await frame)
+    // * page nav
+    try {
+      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
+      console.log('frame', frame)
+      console.log('page.mainFrame() ->', page.mainFrame())
+      console.log('page.mainFrame() ->', frame.childFrames())
+      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
+      // console.log(recaptchaButton)
+    } catch (err) {
+      console.log(err)
+    }
 
     // next page actions
     await page.waitForTimeout(1000)
@@ -104,8 +103,17 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#test-centre-change', { delay: clickDelay  })
     await page.screenshot({ path: '3.png' })
 
-    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
-    // console.log('frame ->', await frame)
+    // * page nav
+    try {
+      const frame = page.frames().find((frame) => frame.name() === 'main-iframe')
+      console.log('frame', frame)
+      console.log('page.mainFrame() ->', page.mainFrame())
+      console.log('page.mainFrame() ->', frame.childFrames())
+      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
+      // console.log(recaptchaButton)
+    } catch (err) {
+      console.log(err)
+    }
 
     // next page actions
     await page.waitForTimeout(1000)
@@ -114,19 +122,57 @@ puppeteer.launch(chromeOptions).then(async browser => {
     await page.click('#driving-licence-submit', { delay: clickDelay  })
     await page.screenshot({ path: '4.png' })
 
-    // frame = await page.frames().find(f => f.name() === 'a-dercae9adxt0')
-    // console.log('frame ->', await frame)
-
+    // * page nav
+    try {
+      const frame = await page.frames().find((frame) => frame.name() === 'main-iframe')
+      console.log('frame', frame)
+      console.log('page.mainFrame() ->', page.mainFrame())
+      console.log('page.mainFrame() ->', frame.childFrames())
+      // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
+      // console.log(recaptchaButton)
+    } catch (err) {
+      console.log(err)
+    }
+  
     // next page actions
     await page.waitForTimeout(1000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
     await page.click('#test-centres-submit', { delay: clickDelay  })
     await page.screenshot({ path: '5.png' })
-  
-    // * for when data has been found and mapped for a result / communicated/notified to user / process complete
+
+    // * for when page is reached, map data for a result / communicated/notified to user / process complete
     //await browser.close()
   } catch (err) {
     console.log(err)
   }
-})
+}
+
+checkWebsite()
+
+// * must simulate user clicks on captcha feilds in iframes, if captcha is visible. cant target those elemts atm.
+// ! need to target the dom of hte recaptcha iframe in orer to siultae clicks that the busted extension needs
+// for (const frame of page.mainFrame().childFrames()) {
+//   console.log(await frame)
+//   await frame.waitForNavigation({ timeout: timeoutDuration }),
+//   await frame.waitForSelector('#rc-anchor-container', { timeout: timeoutDuration } )
+//   await frame.click('#rc-anchor-container')
+// }
+
+// for (const frame of page.mainFrame().childFrames()){
+//   // Here you can use few identifying methods like url(),name(),title()
+//   if (frame.url().includes('twitter')){
+//     console.log('we found the Twitter iframe')
+//     twitterFrame = frame 
+//     // we assign this frame to myFrame to use it later
+//   }
+// }
+// let frame
+// console.log(await page.frames())
+// frame = await page.frames().find(f => f.name() === 'c-lc4afuax3drl')
+// // const button = await frame.$('button')
+// // button.click()
+// console.log('frame ->', await frame)
+
+// const frame = await page.frames().find(f => f.url().startsWith('https://www.google.com/recaptcha/api2/'))
+// console.log(frame)
