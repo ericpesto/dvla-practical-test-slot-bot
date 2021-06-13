@@ -60,19 +60,18 @@ const handleRecaptcha = async(page) => {
     //   }
     // }
 
-    // * for this method to work need to know how to target child frames of main frame
+    // * recaptcha frame found, now now need to target its dom
     await page.waitForTimeout(3000)
     const frames = await page.frames()
     const mainFrame = frames.find((frame) => frame.name() === 'main-iframe')
     // console.log('mainFrame ->', await mainFrame)
-
     const recaptchaFrame = await mainFrame.childFrames().find((frame) => frame.url().startsWith('https://www.google.com/recaptcha/api2/anchor'))
-    // console.log('frames ->', await frames)
-    // console.log('page.mainFrame() ->', await page.mainFrame())
-    //console.log('recaptchaFrame.childFrames() ->', await recaptchaFrame.childFrames())
     if (recaptchaFrame) {
       console.log('recaptchaFrame ->', await recaptchaFrame)
-      recaptchaFrame.click('#rc-anchor-container')
+      recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
+      await page.waitForTimeout(1000)
+      recaptchaFrame.click('#solver-button', { delay: clickDelay  })
+      
       // const recaptchaButton = await recaptchaFrame.$eval('#rc-anchor-container', (element) => element.textContent)
       // console.log(recaptchaButton)
     }
