@@ -43,13 +43,39 @@ const chromeOptions = {
 
 const handleRecaptcha = async(page) => {
   try {
-    const frames = page.frames()
-    // .find((frame) => frame.name() === 'main-iframe')
-    console.log('frames', await frames)
-    console.log('page.mainFrame() ->', await page.mainFrame())
-    console.log('page.mainFrame() ->', await frames.childFrames())
-    // const recaptchaButton = await frame.$eval('rc-anchor-container', (element) => element.textContent)
-    // console.log(recaptchaButton)
+
+    // let recaptchaFrame // this will be populated later by our identified frame
+
+    // for (const frame of page.mainFrame().childFrames()){
+    //   //console.log('frame ->', frame)
+    //   // Here you can use few identifying methods like url(),name(),title()
+    //   // if (frame.url().startsWith('https://www.google.com/recaptcha/api2/anchor?')) {
+    //   // if (frame.url().includes('google')) {
+    //   if (frame.url().includes('recaptcha')) {
+    //     console.log('we found the recaptcha iframe')
+    //     recaptchaFrame = frame 
+    //     console.log('recaptchaFrame ->', recaptchaFrame)
+    //   } else {
+    //     console.log('recaptcha iframe not found')
+    //   }
+    // }
+
+    // * for this method to work need to know how to target child frames of main frame
+    await page.waitForTimeout(3000)
+    const frames = await page.frames()
+    const mainFrame = frames.find((frame) => frame.name() === 'main-iframe')
+    // console.log('mainFrame ->', await mainFrame)
+
+    const recaptchaFrame = await mainFrame.childFrames().find((frame) => frame.url().startsWith('https://www.google.com/recaptcha/api2/anchor'))
+    // console.log('frames ->', await frames)
+    // console.log('page.mainFrame() ->', await page.mainFrame())
+    //console.log('recaptchaFrame.childFrames() ->', await recaptchaFrame.childFrames())
+    if (recaptchaFrame) {
+      console.log('recaptchaFrame ->', await recaptchaFrame)
+      recaptchaFrame.click('#rc-anchor-container')
+      // const recaptchaButton = await recaptchaFrame.$eval('#rc-anchor-container', (element) => element.textContent)
+      // console.log(recaptchaButton)
+    }
   } catch (err) {
     console.log(err)
   }
@@ -62,6 +88,9 @@ const checkWebsite = async() => {
   await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
 
   try {
+    // * page nav
+    handleRecaptcha(page)
+
     // Wait to leave server queue
     await page.waitForNavigation({ timeout: timeoutDuration })
     await page.waitForTimeout(1000)
