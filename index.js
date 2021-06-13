@@ -53,13 +53,15 @@ const handleRecaptcha = async(page) => {
     if (recaptchaFrame) {
       // console.log('recaptchaFrame ->', await recaptchaFrame)
       await recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
-      await page.waitForTimeout(1000)
+      await page.waitForTimeout(3000)
       // ! need to access shadown root elements
       // ? do i need to go to a new frame?
-      await recaptchaFrame.click('#solver-button', { delay: clickDelay  })
+      // * try 2captcha again now you can find the frame
+
+  
+
+      //await recaptchaFrame.click('help-button-holder', { delay: clickDelay  })
       
-      // const recaptchaButton = await recaptchaFrame.$eval('#rc-anchor-container', (element) => element.textContent)
-      // console.log(recaptchaButton)
     }
   } catch (err) {
     console.log(err)
