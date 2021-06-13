@@ -41,10 +41,9 @@ const chromeOptions = {
   args: customArgs
 }
 
+// * try 2captcha again now you can find the frame
 const handleRecaptcha = async(page) => {
   try {
-
-    // * recaptcha frame found, now now need to target its dom
     await page.waitForTimeout(3000)
     const frames = await page.frames()
     const mainFrame = frames.find((frame) => frame.name() === 'main-iframe')
@@ -55,13 +54,8 @@ const handleRecaptcha = async(page) => {
       await recaptchaFrame.click('#rc-anchor-container', { delay: clickDelay  })
       await page.waitForTimeout(3000)
       // ! need to access shadown root elements
-      // ? do i need to go to a new frame?
       // * try 2captcha again now you can find the frame
-
-  
-
-      //await recaptchaFrame.click('help-button-holder', { delay: clickDelay  })
-      
+      await recaptchaFrame.click('shadow/#solver-button', { delay: clickDelay  })
     }
   } catch (err) {
     console.log(err)
@@ -69,12 +63,12 @@ const handleRecaptcha = async(page) => {
 }
 
 const checkWebsite = async() => {
-  // launch puppetteer
-  const browser = await puppeteer.launch(chromeOptions)
-  const page = await browser.newPage()
-  await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
-
   try {
+    // launch puppetteer
+    const browser = await puppeteer.launch(chromeOptions)
+    const page = await browser.newPage()
+    await page.goto('https://driverpracticaltest.dvsa.gov.uk/login')
+
     // * page nav
     handleRecaptcha(page)
 
