@@ -45,9 +45,7 @@ const chromeOptions = {
 
 const handleRecaptcha = async(page) => {
   try {
-    // await page.waitForTimeout(1000)
     for (const frame of await page.mainFrame().childFrames()) {
-      // Attempt to solve any potential captchas in those frames
       await frame.solveRecaptchas()
     }
   } catch (err) {
@@ -64,18 +62,14 @@ const checkWebsite = async() => {
 
     // * page nav
     await handleRecaptcha(page)
-    await page.waitForNavigation({ timeout: timeoutDuration })
-    // await page.waitForSelector('#main', { timeout: timeoutDuration })
-
+  
     // Wait to leave server queue
-    // await page.waitForTimeout(1000)
     await page.screenshot({ path: '1.png' })
 
     // * page nav
     await handleRecaptcha(page)
 
     // handle login form
-    // await page.waitForTimeout(1000)
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
     await page.type('#driving-licence-number', drivingLicenceNumber)
     await page.click('#use-theory-test-number', { delay: clickDelay  })
@@ -87,30 +81,18 @@ const checkWebsite = async() => {
     await handleRecaptcha(page)
 
     // next page actions
-    // await page.waitForTimeout(3000)
     await page.waitForSelector('#test-centre-change', { timeout: timeoutDuration })
     await page.click('#test-centre-change', { delay: clickDelay  })
     await page.screenshot({ path: '3.png' })
-
-    // // * page nav
-    // await handleRecaptcha(page)
-
-    // // next page actions
-    // await page.waitForTimeout(3000)
-    // await page.waitForSelector('#test-choice-earliest', { timeout: timeoutDuration })
-    // await page.click('#test-choice-earliest', { delay: clickDelay  })
-    // await page.click('#driving-licence-submit', { delay: clickDelay  })
-    // await page.screenshot({ path: '4.png' })
 
     // * page nav
     await handleRecaptcha(page)
   
     // next page actions
-    // await page.waitForTimeout(3000)
     await page.waitForSelector('#test-centres-input', { timeout: timeoutDuration })
     await page.type('#test-centres-input', 'PO9 6DY')
     await page.click('#test-centres-submit', { delay: clickDelay  })
-    await page.screenshot({ path: '5.png' })
+    await page.screenshot({ path: 'results-page.png' })
 
     // * for when page is reached, map data for a result / communicated/notified to user / process complete
     //await browser.close()
