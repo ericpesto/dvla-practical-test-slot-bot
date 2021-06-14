@@ -69,14 +69,16 @@ const checkWebsite = async() => {
     // * Wait to leave server queue
     console.log('🚨 entering server queue')
     await page.waitForNavigation({ timeout: timeoutDuration })
-    console.log('✅ left server queue')
+    //console.log('✅ left server queue')
 
     // ?  page nav (potential reCaptcha checkpoint)
-    await handleRecaptcha(page)
-    console.log('🚀 page navigated')
+    // await handleRecaptcha(page)
+    // console.log('🚀 page navigated')
 
     // * handle login form
     await page.waitForSelector('#driving-licence-number', { timeout: timeoutDuration })
+    console.log('✅ left server queue')
+    console.log('🚀 page navigated')
     await page.type('#driving-licence-number', drivingLicenceNumber)
     await page.click('#use-theory-test-number', { delay: clickDelay  })
     await page.type('#theory-test-pass-number', theoryTestPassNumber)
