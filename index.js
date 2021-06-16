@@ -111,7 +111,7 @@ const checkWebsite = async() => {
     // * results page
     const resultsArray = await page.$$eval('.test-centre-details > span', results => results.map(result => result.textContent))
     console.log('👀 RESULTS FOUND ->', await resultsArray)
-    await page.screenshot({ path: 'results-page.png' })
+    // await page.screenshot({ path: 'results-page.png' })
 
     // * done
     await browser.close()
